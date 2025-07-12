@@ -1,3 +1,4 @@
+require("dotenv").config();
 // 1. 导入基本配置 express 框架，cors 跨域
 const express = require("express");
 const cors = require("cors");
@@ -23,7 +24,7 @@ app.use(express.json()); // 解析 json 数据
 createTables();
 
 // 使用 /quote 路由
-app.use("/quote", quoteRoutes);
+app.use("/", quoteRoutes);
 
 const PORT = process.env.PORT || 3000; // 如果没有环境变量 PORT，则回退到 3000
 app.listen(PORT, () => {
