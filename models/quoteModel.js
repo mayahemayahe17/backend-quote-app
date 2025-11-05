@@ -212,13 +212,16 @@ const deleteCompany = (companyId) => {
 
 // 检查公司是否已存在
 const getCompanyByName = (name) => {
+  const searchName = `%${name.toLowerCase().replace(/\s+/g, "")}%`;
+  const sql = `
+    SELECT *
+    FROM companies
+    WHERE LOWER(REPLACE(name, ' ', '')) LIKE ?
+  `;
   return new Promise((resolve, reject) => {
-    db.get(`SELECT * FROM companies WHERE name = ?`, [name], (err, row) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(row); // 如果找到了，返回对象，否则返回 undefined/null
-      }
+    db.get(sql, [searchName], (err, row) => {
+      if (err) reject(err);
+      else resolve(row);
     });
   });
 };

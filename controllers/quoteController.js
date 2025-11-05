@@ -262,7 +262,7 @@ const modifyRateCategoryController = async (req, res) => {
 
   try {
     // 调用修改 rate 的模型方法
-    const result = await modifyRateCategory({
+    await modifyRateCategory({
       id,
       name,
       floor_rate,
@@ -274,8 +274,14 @@ const modifyRateCategoryController = async (req, res) => {
       first_floor_rental_rate,
     });
 
-    // 返回成功响应
-    res.json({ message: "Rate updated successfully", rateId: result.id });
+    // 修改后重新查询最新的 rate 数据
+    const updatedRate = await getRateById(id);
+
+    // 返回完整的最新 rate 对象
+    res.json({
+      message: "Rate updated successfully",
+      rate: updatedRate,
+    });
   } catch (err) {
     console.error("Error updating rate:", err);
     res.status(500).json({ error: "Failed to update rate" });

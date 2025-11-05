@@ -10,11 +10,26 @@ const quoteRoutes = require("./routes/quoteRoutes"); // 引入正确的路径
 // 1. 构建实例，使用 middleware cors 和 express 的 json 解析 body
 const app = express();
 
-// 配置 CORS，允许来自指定前端端口的请求
+// 配置 CORS，允许来自开发和生产前端的请求
+const allowedOrigins = [
+  "http://localhost:3001", // 开发环境前端
+  "https://scaffolding-quote-app.vercel.app", // 生产环境前端
+];
+
 app.use(
   cors({
-    origin: "https://scaffolding-quote-app.vercel.app", // 允许来自前端的请求（前端运行在3001端口）
-    methods: ["GET", "POST", "PUT", "DELETE"], // 允许的方法
+    origin: function (origin, callback) {
+      // 如果请求没有 origin（比如直接用 Postman 测试），也允许
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(
+          new Error("CORS policy: This origin is not allowed - " + origin)
+        );
+      }
+    },
+    methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );
 
